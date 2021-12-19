@@ -1,19 +1,21 @@
 <template>
   <div>
-    <h1 class="centralizado">{{ titulo }}</h1>
-
+    <!--<h1 class="centralizado" v-meu-transform="15">{{ titulo }}</h1>-->
+    <!--<h1 class="centralizado" v-meu-transform="{ incremento: 15, animate: true }">{{ titulo }}</h1>-->
+    <h1 class="centralizado" v-meu-transform.animate.reverse="15">{{ titulo }}</h1>
     <input type="search" class="filtro" @input="filtro = $event.target.value" placeholder="filtre por parte do título">
     <ul class="lista-fotos">
       <li class="lista-fotos-item" v-for="foto in fotosComFiltro" :key="foto.titulo">
         <meu-painel :titulo="foto.titulo">
-              <imagem-responsiva :src="foto.url" :alt="foto.titulo" />
+              <imagem-responsiva :src="foto.url" :alt="foto.titulo" v-meu-transform:scale.animate="1.1" />
               <!--<meu-botao rotulo="remover" tipo="button" @click.native="remove(foto)"/>-->
               <meu-botao
                 rotulo="REMOVER"
                 tipo="button"
                 :confirmacao="true"
                 estilo="perigo"
-                @botaoAtivado="remove($event, foto)"/>
+                @botaoAtivado="remove($event, foto)"
+              />
         </meu-painel>
       </li>
     </ul>
@@ -22,7 +24,7 @@
 
 <script>
 import Painel from '../shared/painel/Painel.vue';
-import ImagemResponsiva from '../shared/imagem-reponsiva/ImagemResponsiva.vue'
+import ImagemResponsiva from '../shared/imagem-responsiva/ImagemResponsiva.vue'
 import Botao from '../shared/botao/Botao.vue';
 
 export default {
