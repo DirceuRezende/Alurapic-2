@@ -3,6 +3,8 @@
     <!--<h1 class="centralizado" v-meu-transform="15">{{ titulo }}</h1>-->
     <!--<h1 class="centralizado" v-meu-transform="{ incremento: 15, animate: true }">{{ titulo }}</h1>-->
     <h1 class="centralizado" v-meu-transform.animate.reverse="15">{{ titulo }}</h1>
+
+    <p class="centralizado" v-show="mensagem">{{ mensagem }}</p>
     <input type="search" class="filtro" @input="filtro = $event.target.value" placeholder="filtre por parte do título">
     <ul class="lista-fotos">
       <li class="lista-fotos-item" v-for="foto in fotosComFiltro" :key="foto.titulo">
@@ -37,17 +39,9 @@ export default {
   data () {
       return {
         titulo: 'Alurapic',
-        fotos: [
-          {
-            url: 'https://matsudapet.com.br/blog/wp-content/uploads/2019/08/shutterstock_559799125-compressed.jpg',
-            titulo: 'Cachorro 1'
-          },
-          {
-            url: 'https://matsudapet.com.br/blog/wp-content/uploads/2019/08/shutterstock_559799125-compressed.jpg',
-            titulo: 'Cachorro 2'
-          }
-        ],
-        filtro: ''
+        fotos: [],
+        filtro: '',
+        mensagem: ''
     }
   },
   computed: {
@@ -63,13 +57,25 @@ export default {
 
   methods: {
     remove($event, foto) {
-      alert($event);
-      alert(`Remover a foto! ${foto.titulo}`);
+      /* alert($event);
+      alert(`Remover a foto! ${foto.titulo}`); */
+      this.$http
+        .delete(`v1/fotos/${foto._id}`)
+        .then(() => {
+          let indice = this.fotos.indexOf(foto);
+          this.fotos.splice(indice, 1);
+          this.mensagem = 'Foto removida com sucesso!';
+          })
+        .catch(err => {
+          console.log(err);
+          this.mensagem = 'Não foi possível remover a foto!';
+        });
+
     }
   },
 
   created() {
-    this.$http.get('http://localhost:3000/v1/fotos')
+    this.$http.get('v1/fotos')
       .then(res => res.json())
       .then(fotos => this.fotos = fotos)
       .catch(err => console.log(err));
