@@ -7,7 +7,10 @@ import VueRouter from 'vue-router';
 import { routes } from './routes';
 import './directives/Transform';
 import msg from './pt_BR';
-console.log('msg', msg)
+
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.js';
+
 Vue.use(VueResource);
 Vue.use(VueRouter);
 Vue.use(VeeValidate, {
@@ -24,7 +27,7 @@ const router = new VueRouter({
   mode: 'history'
 });
 
-Vue.http.options.root = 'http://localhost:3000';
+Vue.http.options.root = process.env.API_URL ? process.env.API_URL : 'http://localhost:3000';
 
 new Vue({
   el: '#app',
