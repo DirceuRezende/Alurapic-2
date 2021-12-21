@@ -11,6 +11,11 @@
         <meu-painel :titulo="foto.titulo">
               <imagem-responsiva :src="foto.url" :alt="foto.titulo" v-meu-transform:scale.animate="1.1" />
               <!--<meu-botao rotulo="remover" tipo="button" @click.native="remove(foto)"/>-->
+              <router-link :to="{ name: 'cadastro', params: { id : foto._id }}">
+                <meu-botao
+                  rotulo="Alterar"
+                  tipo="button"/>
+              </router-link>
               <meu-botao
                 rotulo="REMOVER"
                 tipo="button"
@@ -28,6 +33,7 @@
 import Painel from '../shared/painel/Painel.vue';
 import ImagemResponsiva from '../shared/imagem-responsiva/ImagemResponsiva.vue'
 import Botao from '../shared/botao/Botao.vue';
+import FotoService from '../../domain/foto/FotoService';
 
 export default {
   name: 'home',
@@ -56,29 +62,31 @@ export default {
   },
 
   methods: {
-    remove($event, foto) {
-      /* alert($event);
-      alert(`Remover a foto! ${foto.titulo}`); */
-      this.$http
-        .delete(`v1/fotos/${foto._id}`)
-        .then(() => {
-          let indice = this.fotos.indexOf(foto);
-          this.fotos.splice(indice, 1);
-          this.mensagem = 'Foto removida com sucesso!';
-          })
-        .catch(err => {
-          console.log(err);
-          this.mensagem = 'Não foi possível remover a foto!';
-        });
-
+     remove(_, foto) {
+       console.log(foto)
+      this.service
+        .apaga(foto._id)
+        .then(
+          () => {
+            let indice = this.fotos.indexOf(foto);
+            this.fotos.splice(indice, 1);
+            this.mensagem = 'Foto removida com sucesso'
+          },
+          err => {
+            this.mensagem = 'Não foi possível remover a foto';
+            console.log(err);
+          }
+        )
     }
+
   },
 
   created() {
-    this.$http.get('v1/fotos')
-      .then(res => res.json())
-      .then(fotos => this.fotos = fotos)
-      .catch(err => console.log(err));
+    this.service = new FotoService(this.$resource);
+
+    this.service
+      .lista()
+      .then(fotos => this.fotos = fotos, err => console.log(err));
   }
 }
 </script>
