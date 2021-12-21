@@ -63,7 +63,7 @@ export default {
 
   methods: {
      remove(_, foto) {
-       console.log(foto)
+
       this.service
         .apaga(foto._id)
         .then(
@@ -72,10 +72,7 @@ export default {
             this.fotos.splice(indice, 1);
             this.mensagem = 'Foto removida com sucesso'
           },
-          err => {
-            this.mensagem = 'Não foi possível remover a foto';
-            console.log(err);
-          }
+          err => this.mensagem = err.message
         )
     }
 
@@ -83,10 +80,13 @@ export default {
 
   created() {
     this.service = new FotoService(this.$resource);
-
-    this.service
-      .lista()
-      .then(fotos => this.fotos = fotos, err => console.log(err));
+    this.service.lista()
+      .then(
+        fotos => this.fotos = fotos,
+        err => {
+          console.log(err);
+          this.mensagem = 'Não foi possível obter as fotos. Tenta mais tarde.';
+      });
   }
 }
 </script>
